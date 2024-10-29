@@ -1,9 +1,11 @@
 const Dictionary = {
   es: {
+    greeting: "Hola!!, Me llamo",
+    state: "Disponible para trabajar!",
     name: "Aaron Reyes",
-    title: "FullStack Developer",
+    title: "FullStack Web Developer",
     description:
-      "Transformando ideas en realidad a través de código limpio y soluciones innovadoras",
+      "Me dedico a dar solición a problematicas de manera eficiente y limpia.",
     skills: ["React", "JavaScript", "HTML", "CSS", "Node.js", "Git"],
     contact: {
       title: "Contacto",
@@ -20,12 +22,13 @@ const Dictionary = {
       contact: "Contacto",
     },
     downloadCV: "Descargar CV",
-    viewProject: "Ver Proyecto",
-    copyright: "Todos los derechos reservados.",
+    copyright: "Algunos derechos reservados.",
   },
   en: {
+    greeting: "Hello!, My name is",
+    state: "Ready to work!",
     name: "Aaron Reyes",
-    title: "FullStack Developer",
+    title: "FullStack Web Developer",
     description:
       "Transforming ideas into reality through clean code and innovative solutions",
     skills: ["React", "JavaScript", "HTML", "CSS", "Node.js", "Git"],
@@ -38,14 +41,13 @@ const Dictionary = {
       sendButton: "Send Message",
     },
     nav: {
-      about: "About",
+      about: "About Me",
       projects: "Projects",
       achievements: "Achievements",
       contact: "Contact",
     },
     downloadCV: "Download CV",
-    viewProject: "View Project",
-    copyright: "All rights reserved.",
+    copyright: "Some rights reserved.",
   },
 };
 
