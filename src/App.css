@@ -1,0 +1,177 @@
+/* Gradient Animation */
+@keyframes gradient-y {
+  0%, 100% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+}
+
+.animate-gradient-y {
+  background-size: 200% 200%;
+  animation: gradient-y 15s ease infinite;
+}
+
+/* Stars Background */
+.stars {
+  background: #000 url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="3" height="3" viewBox="0 0 3 3"%3E%3Ccircle cx="1.5" cy="1.5" r="0.5" fill="%23fff" opacity="0.5"/%3E%3C/svg%3E') repeat;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.3;
+}
+
+/* Twinkling Effect */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.twinkling {
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+/* Glow Spheres */
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(1.1);
+  }
+}
+
+.glow-sphere {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(147, 51, 234, 0.3) 0%, transparent 70%);
+  filter: blur(40px);
+  animation: glow 10s ease-in-out infinite;
+}
+
+.glow-sphere:nth-child(2) {
+  animation-delay: -5s;
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+}
+
+/* Smooth transitions for all elements */
+* {
+  transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* Optional: Add this if you want to reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gradient-y,
+  .twinkling,
+  .glow-sphere {
+    animation: none;
+  }
+}
+
+section {
+  position: relative;
+  transition: all 0.5s ease-in-out;
+}
+
+section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  transition: background 0.5s ease-in-out;
+}
+
+/* Instead of using bg-black bg-opacity-50, use these classes */
+section#projects::before,
+section#skills::before,
+section#contact::before {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+/* Gradient animation enhancement */
+.animate-gradient-y {
+  background-size: 200% 200%;
+  animation: gradient-y 15s ease infinite;
+  transition: all 0.5s ease-in-out;
+}
+
+/* Bento grid specific styles */
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1024px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .col-span-2 {
+    grid-column: span 1;
+  }
+  
+  .row-span-2 {
+    grid-row: span 1;
+  }
+}
+
+/* Enhanced hover effects */
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+}
+
+/* Smooth background transitions */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Remove the section::before styles and replace with these */
+.section-bg {
+  z-index: 1;
+  transition: background 0.5s ease-in-out;
+}
+
+/* New styles for section titles */
+.section-title {
+  position: relative;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 3rem;
+  background: linear-gradient(to right, #60a5fa, #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
+
+section > * {
+  position: relative;
+  z-index: 2;
+}
