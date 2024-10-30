@@ -46,6 +46,10 @@ function App() {
   const { language } = useLanguage();
   const t = Dictionary[language];
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
   const projects = [
     {
       title: "Car Repair Service",
@@ -113,22 +117,35 @@ function App() {
     });
   };
 
-  const handleSubmit = async (event, name, email, message) => {
-    event.preventDefault(); // Prevenir la recarga de la página
+  const clearQuiz = () =>{
+    setEmail("");
+    setName("");
+    setMessage("");
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if(!name || !email || !message){
+      return toast.warning("Rellena correctamente el formulario!.");
+    }
 
     try {
       const response = await axios.post("http://localhost:3001/sendMessage", {
-        name,
-        email,
-        message,
+        name: name,
+        email: email,
+        message: message,
       });
 
       if (response.data.success) {
-        toast.success("Todo bien");
+        toast.success("Mensaje enviado correctamente.");
+        clearQuiz();
+      } else {
+        toast.error("Error al enviar el mensaje.");
       }
     } catch (error) {
-      console.error("Error al enviar el correo", error);
-      toast.error("Nada bien");
+      console.error("Error al enviar el correo:", error);
+      toast.error("Hubo un problema con el envío.");
     }
   };
 
@@ -313,13 +330,15 @@ function App() {
                 {language === "es" ? "Contacto" : "Contact"}
               </h2>
               <div className="bg-black bg-opacity-50 backdrop-blur-sm rounded-xl p-8">
-                <form className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label className="block text-white mb-2">
                       {language === "es" ? "Nombre" : "Name"}
                     </label>
                     <input
                       type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 transition-colors duration-300"
                     />
                   </div>
@@ -327,6 +346,8 @@ function App() {
                     <label className="block text-white mb-2">Email</label>
                     <input
                       type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 transition-colors duration-300"
                     />
                   </div>
@@ -336,11 +357,13 @@ function App() {
                     </label>
                     <textarea
                       rows="4"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
                       className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 transition-colors duration-300"
                     ></textarea>
                   </div>
                   <button
-                    onClick={handleSubmit}
+                    type="submit"
                     className="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
                   >
                     {language === "es" ? "Enviar Mensaje" : "Send Message"}

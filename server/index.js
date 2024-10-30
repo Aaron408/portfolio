@@ -1,43 +1,59 @@
 const express = require("express");
+const cors = require("cors");
 const nodemailer = require("nodemailer");
 const app = express();
-
 require("dotenv").config();
 
 app.use(express.json());
+app.use(cors());
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
-app.post("/api/sendMessage", async (req, res) => {
-  const { name, email, message } = req.body;
+// Configuración de nodemailer
+const transporter = nodemailer.createTransport({
+  host: "smtp.titan.email",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.NODE_EMAIL,
+    pass: process.env.NODE_PASSWORD,
+  },
+});
 
-  // Configuración de nodemailer
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.PORT,
-      pass: "tu-contraseña",
-    },
-  });
-
-  // Configuración del correo
+// Función para enviar correo
+const enviarCorreo = async (email, name, message) => {
   const mailOptions = {
-    from: email,
-    to: "tu-email@gmail.com",
-    subject: `Mensaje de ${name}`,
+    from: `"CRONIS" <${process.env.NODE_EMAIL}>`,
+    to: "reruaarr@gmail.com",
+    subject: `Mensaje de ${name} con correo ${email}`,
     text: message,
   };
 
+  return transporter.sendMail(mailOptions);
+};
+
+// Rutas
+app.get("/", (req, res) => {
+  res.send("Email service running!");
+});
+
+app.post("/sendMessage", async (req, res) => {
+  const { name, email, message } = req.body;
+
   try {
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "Mensaje enviado correctamente." });
+    await enviarCorreo(email, name, message);
+    res
+      .status(200)
+      .json({ success: true, message: "Mensaje enviado correctamente." });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Hubo un error al enviar el mensaje." });
+    console.error("Error al enviar el mensaje:", error.message, error.stack);
+    res
+      .status(500)
+      .json({ success: false, message: "Hubo un error al enviar el mensaje." });
   }
 });
 
-// Levantar el servidor
+// Iniciar servidor
 app.listen(PORT, () => {
   console.log(`Server running in port ${PORT}`);
 });
