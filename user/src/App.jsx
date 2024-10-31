@@ -1,7 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "./App.css";
+
+import { pdfjs } from "react-pdf";
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.js",
+  import.meta.url
+).toString();
 
 //Icons
 import {
@@ -9,6 +16,7 @@ import {
   FaLinkedin,
   FaFilePdf,
   FaDownload,
+  FaExpand,
   FaTimes,
 } from "react-icons/fa";
 import {
@@ -48,9 +56,17 @@ import CLogin from "./Images/ChronisImages/ChronisLogin.png";
 import CHome from "./Images/ChronisImages/ChronisHome.png";
 import CProfile from "./Images/ChronisImages/ChronisProfile.png";
 
+import EnglishCertificate from "./Documents/EnglishCertificate.pdf";
+import MendixCertificate from "./Documents/MendixCertificate.pdf";
+import MyCV from "./Documents/MyCV.pdf";
+
+import MendixLogo from "./Images/MendixLogo.png";
+import BritishLogo from "./Images/BritishCouncilLogo.png";
+
 function App() {
   const { language } = useLanguage();
   const t = Dictionary[language];
+  const modalRef = useRef(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -99,18 +115,46 @@ function App() {
     { name: "Java", icon: DiJava, level: 70 },
     { name: "Kotlin", icon: SiKotlin, level: 70 },
   ];
+  const [selectedCert, setSelectedCert] = useState(null);
 
   const certifications = [
-    { name: "React Developer Certificate", file: "/path/to/react-cert.pdf" },
-    { name: "Node.js Advanced", file: "/path/to/nodejs-cert.pdf" },
-    { name: "Full Stack Web Development", file: "/path/to/fullstack-cert.pdf" },
+    {
+      name: "Mendix Rapid Developer",
+      institution: "Mendix",
+      date: "April - 2024",
+      logo: MendixLogo,
+      file: MendixCertificate,
+    },
+    {
+      name: "English Level B2+",
+      institution: "British Council",
+      date: "June - 2024",
+      logo: BritishLogo,
+      file: EnglishCertificate,
+    },
   ];
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setSelectedCert(null);
+      }
+    };
+
+    if (selectedCert) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [selectedCert]);
 
   // Function to handle CV download
   const handleCVDownload = () => {
     const link = document.createElement("a");
-    link.href = "/path/to/your-cv.pdf";
-    link.download = "YourName_CV.pdf";
+    link.href = MyCV;
+    link.download = "AaronReyes_CV.pdf";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -225,7 +269,11 @@ function App() {
                 <p className="text-xl mb-8 text-gray-300">{t.description}</p>
 
                 <div className="flex space-x-4 mb-8 items-center">
-                  <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 text-white p-2 rounded-lg mr-2 font-semibold transition duration-300">
+                  <button
+                    onClick={handleCVDownload}
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 text-white p-2.5 px-3 rounded-lg mr-2 font-semibold transition duration-300 flex items-center"
+                  >
+                    <FaDownload className="mr-2" />
                     {t.downloadCV}
                   </button>
                   <div className="flex space-x-4">
@@ -364,21 +412,99 @@ function App() {
                     key={index}
                     className="bg-gradient-to-br from-blue-500/10 to-purple-600/10 backdrop-blur-sm rounded-xl p-6 hover:scale-[1.02] transition-all duration-300"
                   >
-                    <h3 className="text-lg font-semibold text-white mb-4">
-                      {cert.name}
-                    </h3>
-                    <button
-                      onClick={() => handleCertDownload(cert.file, cert.name)}
-                      className="flex items-center justify-center w-full py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
-                    >
-                      <FaFilePdf className="mr-2" />
-                      {language === "es" ? "Descargar PDF" : "Download PDF"}
-                    </button>
+                    <div className="flex items-center mb-4">
+                      <img
+                        src={cert.logo}
+                        alt={`${cert.institution} logo`}
+                        className="w-12 h-12 mr-4 object-contain"
+                      />
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">
+                          {cert.name}
+                        </h3>
+                        <p className="text-sm text-gray-300">
+                          {cert.institution} - {cert.date}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 mt-4">
+                      <button
+                        onClick={() => handleCertDownload(cert.file, cert.name)}
+                        className="flex-1 flex items-center justify-center py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+                      >
+                        <FaDownload className="mr-2" />
+                        {language === "es" ? "Descargar" : "Download"}
+                      </button>
+                      <button
+                        onClick={() => setSelectedCert(cert)}
+                        className="flex items-center justify-center py-2 px-4 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition duration-300"
+                      >
+                        <FaExpand className="mr-2" />
+                        {language === "es" ? "Detalles" : "Details"}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </section>
+
+          {/* Modal para detalles del certificado */}
+          {selectedCert && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+              aria-modal="true"
+              role="dialog"
+              aria-labelledby="cert-modal-title"
+            >
+              <div
+                ref={modalRef}
+                className="bg-gray-800 rounded-lg p-6 max-w-md w-full"
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <h3
+                    id="cert-modal-title"
+                    className="text-xl font-semibold text-white"
+                  >
+                    {selectedCert.name}
+                  </h3>
+                  <button
+                    onClick={() => setSelectedCert(null)}
+                    className="text-gray-400 hover:text-white transition-colors"
+                    aria-label="Cerrar modal"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+                <img
+                  src={selectedCert.logo}
+                  alt={`${selectedCert.institution} logo`}
+                  className="w-26 h-26 mx-auto mb-4 object-contain"
+                />
+                <p className="text-gray-300 mb-2">
+                  <strong>
+                    {language === "es" ? "Institución:" : "Institution:"}
+                  </strong>{" "}
+                  {selectedCert.institution}
+                </p>
+                <p className="text-gray-300 mb-4">
+                  <strong>{language === "es" ? "Fecha:" : "Date:"}</strong>{" "}
+                  {selectedCert.date}
+                </p>
+                <button
+                  onClick={() =>
+                    handleCertDownload(selectedCert.file, selectedCert.name)
+                  }
+                  className="w-full flex items-center justify-center py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+                >
+                  <FaDownload className="mr-2" />
+                  {language === "es"
+                    ? "Descargar Certificado"
+                    : "Download Certificate"}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Contact Section */}
           <section id="contact" className="py-20 relative">
