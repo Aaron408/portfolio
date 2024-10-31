@@ -4,7 +4,13 @@ import { toast } from "react-toastify";
 import "./App.css";
 
 //Icons
-import { FaGithub, FaLinkedin, FaTimes } from "react-icons/fa";
+import {
+  FaGithub,
+  FaLinkedin,
+  FaFilePdf,
+  FaDownload,
+  FaTimes,
+} from "react-icons/fa";
 import {
   SiJavascript,
   SiReact,
@@ -45,11 +51,9 @@ import CProfile from "./Images/ChronisImages/ChronisProfile.png";
 function App() {
   const { language } = useLanguage();
   const t = Dictionary[language];
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-
   const projects = [
     {
       title: "Car Repair Service",
@@ -81,7 +85,9 @@ function App() {
       ],
     },
   ];
-
+  const [mainImage, setMainImage] = useState(projects.map(() => 0));
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const skills = [
     { name: "React", icon: SiReact, level: 90 },
     { name: "JavaScript", icon: SiJavascript, level: 70 },
@@ -94,10 +100,31 @@ function App() {
     { name: "Kotlin", icon: SiKotlin, level: 70 },
   ];
 
-  // Estado para almacenar el índice de la imagen principal de cada proyecto
-  const [mainImage, setMainImage] = useState(projects.map(() => 0));
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const certifications = [
+    { name: "React Developer Certificate", file: "/path/to/react-cert.pdf" },
+    { name: "Node.js Advanced", file: "/path/to/nodejs-cert.pdf" },
+    { name: "Full Stack Web Development", file: "/path/to/fullstack-cert.pdf" },
+  ];
+
+  // Function to handle CV download
+  const handleCVDownload = () => {
+    const link = document.createElement("a");
+    link.href = "/path/to/your-cv.pdf";
+    link.download = "YourName_CV.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Function to handle certification download
+  const handleCertDownload = (file, name) => {
+    const link = document.createElement("a");
+    link.href = file;
+    link.download = `${name}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const openModal = (image) => {
     setSelectedImage(image);
@@ -117,25 +144,28 @@ function App() {
     });
   };
 
-  const clearQuiz = () =>{
+  const clearQuiz = () => {
     setEmail("");
     setName("");
     setMessage("");
-  }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if(!name || !email || !message){
+    if (!name || !email || !message) {
       return toast.warning("Rellena correctamente el formulario!.");
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/sendMessage", {
-        name: name,
-        email: email,
-        message: message,
-      });
+      const response = await axios.post(
+        "https://mailer-portfolio-git-main-aarons-projects-ab43df53.vercel.app/sendMessage",
+        {
+          name: name,
+          email: email,
+          message: message,
+        }
+      );
 
       if (response.data.success) {
         toast.success("Mensaje enviado correctamente.");
@@ -317,6 +347,33 @@ function App() {
                         />
                       </div>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="certifications" className="py-20 relative">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                {language === "es" ? "Certificaciones" : "Certifications"}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {certifications.map((cert, index) => (
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-blue-500/10 to-purple-600/10 backdrop-blur-sm rounded-xl p-6 hover:scale-[1.02] transition-all duration-300"
+                  >
+                    <h3 className="text-lg font-semibold text-white mb-4">
+                      {cert.name}
+                    </h3>
+                    <button
+                      onClick={() => handleCertDownload(cert.file, cert.name)}
+                      className="flex items-center justify-center w-full py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+                    >
+                      <FaFilePdf className="mr-2" />
+                      {language === "es" ? "Descargar PDF" : "Download PDF"}
+                    </button>
                   </div>
                 ))}
               </div>

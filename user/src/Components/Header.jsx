@@ -18,7 +18,7 @@ const Header = () => {
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
-              {["about", "projects", "skills", "contact"].map((item) => (
+              {["about", "projects", "skills", "certifications", "contact"].map((item) => (
                 <a
                   key={item}
                   href={`#${item}`}
