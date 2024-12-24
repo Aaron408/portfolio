@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "./App.css";
@@ -35,7 +35,7 @@ import ProfilePhoto from "./Images/ProfilePhoto.jpg";
 
 //Components
 import Header from "./Components/Header";
-import ProjectCard from "./Components/ProjectCard";
+const ProjectCard = lazy(() => import("./Components/ProjectCard"));
 
 //Dictionary
 import Dictionary from "./Utils/Dictionary";
@@ -188,7 +188,7 @@ function App() {
     });
   };
 
-  const clearQuiz = () => {
+  const clearForm = () => {
     setEmail("");
     setName("");
     setMessage("");
@@ -213,7 +213,7 @@ function App() {
 
       if (response.data.success) {
         toast.success("Mensaje enviado correctamente.");
-        clearQuiz();
+        clearForm();
       } else {
         toast.error("Error al enviar el mensaje.");
       }
@@ -308,22 +308,24 @@ function App() {
               </div>
             </div>
           </section>
-          <section id="projects" className="py-16 bg-black bg-opacity-50">
+          <section id="projects" className="py-16 section-bg">
             <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 md:mx-4">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+              <h2 className="section-title">
                 {language === "es" ? "Proyectos" : "Projects"}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {projects.map((project, index) => (
-                  <ProjectCard
-                    key={index}
-                    project={project}
-                    mainImage={mainImage[index]}
-                    setMainImage={updateMainImage}
-                    openModal={openModal}
-                    projectIndex={index}
-                  />
-                ))}
+                <Suspense fallback={<div>Loading...</div>}>
+                  {projects.map((project, index) => (
+                    <ProjectCard
+                      key={index}
+                      project={project}
+                      mainImage={mainImage[index]}
+                      setMainImage={updateMainImage}
+                      openModal={openModal}
+                      projectIndex={index}
+                    />
+                  ))}
+                </Suspense>
               </div>
 
               {/* Modal */}
@@ -341,21 +343,15 @@ function App() {
                       alt="Selected preview"
                       className="w-full h-auto max-h-[90vh] object-contain rounded-lg"
                     />
-                    {/* <button
-                    className="h-10 w-10 absolute top-2 right-2 text-white text-2xl p-2 bg-gray-400 hover:bg-gray-500 rounded-full"
-                    onClick={closeModal}
-                  >
-                    <FaTimes />
-                  </button> */}
                   </div>
                 </div>
               )}
             </div>
           </section>
 
-          <section id="skills" className="py-20 relative">
+          <section id="skills" className="py-20 relative section-bg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+              <h2 className="section-title">
                 {language === "es" ? "Habilidades" : "Skills"}
               </h2>
 
@@ -363,7 +359,6 @@ function App() {
                 {/* Feature Skill - Spans 2 columns and rows */}
                 <div className="col-span-2 row-span-2 bg-gradient-to-br from-blue-500/10 to-purple-600/10 backdrop-blur-sm rounded-3xl p-8 hover:scale-[1.02] transition-all duration-300 group">
                   <div className="h-full flex flex-col items-center justify-center space-y-4">
-                    {/* Invoke the icon component correctly */}
                     <SiReact className="w-20 h-20 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
                     <h3 className="text-2xl font-bold text-white">
                       {skills[0].name}
@@ -401,9 +396,9 @@ function App() {
             </div>
           </section>
 
-          <section id="certifications" className="py-20 relative">
+          <section id="certifications" className="py-20 relative section-bg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+              <h2 className="section-title">
                 {language === "es" ? "Certificaciones" : "Certifications"}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -507,9 +502,9 @@ function App() {
           )}
 
           {/* Contact Section */}
-          <section id="contact" className="py-20 relative">
+          <section id="contact" className="py-20 relative section-bg">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+              <h2 className="section-title">
                 {language === "es" ? "Contacto" : "Contact"}
               </h2>
               <div className="bg-black bg-opacity-50 backdrop-blur-sm rounded-xl p-8">
@@ -562,3 +557,4 @@ function App() {
 }
 
 export default App;
+
